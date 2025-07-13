@@ -77,6 +77,11 @@ const Counter: React.FC = () => {
     setMessage(`เพิ่มเป็น ${count + 1}`);
   };
 
+  const times = () => {
+    setCount(prevCount => prevCount * 2);
+    setMessage(`คูณด้วย 2 เป็น ${count * 2}`);
+  };
+
   const decrement = () => {
     setCount(prevCount => prevCount - 1);
     setMessage(`ลดเป็น ${count - 1}`);
@@ -110,6 +115,12 @@ const Counter: React.FC = () => {
           className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
         >
           เพิ่ม
+        </button>
+        <button 
+          onClick={times}
+          className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600"
+        >
+          คูณ
         </button>
       </div>
     </div>
@@ -266,7 +277,7 @@ const FocusInput: React.FC = () => {
 const HooksExamples: React.FC = () => {
   return (
     <div className="max-w-4xl mx-auto p-6 text-black">
-      <h1 className="text-3xl font-bold text-center mb-8">ตัวอย่าง React Hooks</h1>
+      <h1 className="text-3xl font-bold text-center mb-8 text-white">ตัวอย่าง React Hooks</h1>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Counter />

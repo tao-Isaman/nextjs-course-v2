@@ -1,20 +1,34 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect, useRef, useContext, createContext } from 'react';
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useContext,
+  createContext,
+} from "react";
 
 // ===== useContext Example =====
 // สร้าง Context สำหรับจัดการข้อมูลผู้ใช้
 const UserContext = createContext<{
-  user: { name: string; email: string } | null;
-  setUser: (user: { name: string; email: string } | null) => void;
+  user: { name: string; email: string; address: string } | null;
+  setUser: (
+    user: { name: string; email: string; address: string } | null
+  ) => void;
 }>({
   user: null,
   setUser: () => {},
 });
 
 // Provider Component สำหรับ Context
-const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<{ name: string; email: string } | null>(null);
+const UserProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
+  const [user, setUser] = useState<{
+    name: string;
+    email: string;
+    address: string;
+  } | null>(null);
 
   return (
     <UserContext.Provider value={{ user, setUser }}>
@@ -26,9 +40,20 @@ const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
 // Component ที่ใช้ useContext
 const UserProfile: React.FC = () => {
   const { user, setUser } = useContext(UserContext);
+  const refName = useRef<HTMLInputElement>(null);
+  const refEmail = useRef<HTMLInputElement>(null);
+
+  // ref for address
+  const refAddress = useRef<HTMLInputElement>(null);
 
   const handleLogin = () => {
-    setUser({ name: 'สมชาย ใจดี', email: 'somchai@example.com' });
+    if (refName.current && refEmail.current) {
+      setUser({
+        name: refName.current.value,
+        email: refEmail.current.value,
+        address: refAddress.current?.value || "",
+      });
+    }
   };
 
   const handleLogout = () => {
@@ -37,12 +62,15 @@ const UserProfile: React.FC = () => {
 
   return (
     <div className="p-4 border rounded-lg bg-blue-50 text-black">
-      <h3 className="text-lg font-bold mb-2">useContext Example - ข้อมูลผู้ใช้</h3>
+      <h3 className="text-lg font-bold mb-2">
+        useContext Example - ข้อมูลผู้ใช้
+      </h3>
       {user ? (
         <div>
           <p>ชื่อ: {user.name}</p>
           <p>อีเมล: {user.email}</p>
-          <button 
+          <p>ที่อยู่: {user.address}</p>
+          <button
             onClick={handleLogout}
             className="mt-2 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
           >
@@ -51,8 +79,25 @@ const UserProfile: React.FC = () => {
         </div>
       ) : (
         <div>
-          <p>ยังไม่ได้เข้าสู่ระบบ</p>
-          <button 
+          <input
+            className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            type="text"
+            placeholder="ชื่อผู้ใช้"
+            ref={refName}
+          />
+          <input
+            className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            type="email"
+            placeholder="email"
+            ref={refEmail}
+          />
+          <input
+            className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            type="text"
+            placeholder="ที่อยู่"
+            ref={refAddress}
+          />
+          <button
             onClick={handleLogin}
             className="mt-2 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
           >
@@ -68,28 +113,28 @@ const UserProfile: React.FC = () => {
 const Counter: React.FC = () => {
   // useState สำหรับเก็บค่า counter
   const [count, setCount] = useState<number>(0);
-  
+
   // useState สำหรับเก็บข้อความ
-  const [message, setMessage] = useState<string>('เริ่มต้นที่ 0');
+  const [message, setMessage] = useState<string>("เริ่มต้นที่ 0");
 
   const increment = () => {
-    setCount(prevCount => prevCount + 1);
+    setCount((prevCount) => prevCount + 1);
     setMessage(`เพิ่มเป็น ${count + 1}`);
   };
 
   const times = () => {
-    setCount(prevCount => prevCount * 2);
+    setCount((prevCount) => prevCount * 2);
     setMessage(`คูณด้วย 2 เป็น ${count * 2}`);
   };
 
   const decrement = () => {
-    setCount(prevCount => prevCount - 1);
+    setCount((prevCount) => prevCount - 1);
     setMessage(`ลดเป็น ${count - 1}`);
   };
 
   const reset = () => {
     setCount(0);
-    setMessage('รีเซ็ตเป็น 0');
+    setMessage("รีเซ็ตเป็น 0");
   };
 
   return (
@@ -98,25 +143,25 @@ const Counter: React.FC = () => {
       <div className="text-2xl font-bold mb-2">{count}</div>
       <p className="text-sm text-gray-600 mb-4">{message}</p>
       <div className="flex gap-2">
-        <button 
+        <button
           onClick={decrement}
           className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
         >
           ลด
         </button>
-        <button 
+        <button
           onClick={reset}
           className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
         >
           รีเซ็ต
         </button>
-        <button 
+        <button
           onClick={increment}
           className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
         >
           เพิ่ม
         </button>
-        <button 
+        <button
           onClick={times}
           className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600"
         >
@@ -138,7 +183,7 @@ const Timer: React.FC = () => {
 
     if (isRunning) {
       interval = setInterval(() => {
-        setTime(prevTime => prevTime + 1);
+        setTime((prevTime) => prevTime + 1);
       }, 1000);
     }
 
@@ -167,7 +212,9 @@ const Timer: React.FC = () => {
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    return `${mins.toString().padStart(2, "0")}:${secs
+      .toString()
+      .padStart(2, "0")}`;
   };
 
   return (
@@ -175,21 +222,21 @@ const Timer: React.FC = () => {
       <h3 className="text-lg font-bold mb-2">useEffect Example - ตัวจับเวลา</h3>
       <div className="text-3xl font-mono mb-4">{formatTime(time)}</div>
       <div className="flex gap-2">
-        <button 
+        <button
           onClick={startTimer}
           disabled={isRunning}
           className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 disabled:bg-gray-300"
         >
           เริ่ม
         </button>
-        <button 
+        <button
           onClick={stopTimer}
           disabled={!isRunning}
           className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 disabled:bg-gray-300"
         >
           หยุด
         </button>
-        <button 
+        <button
           onClick={resetTimer}
           className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
         >
@@ -207,7 +254,7 @@ const Timer: React.FC = () => {
 const FocusInput: React.FC = () => {
   // useRef สำหรับอ้างอิง DOM element
   const inputRef = useRef<HTMLInputElement>(null);
-  
+
   // useRef สำหรับเก็บค่า previous count
   const prevCountRef = useRef<number>(0);
   const [count, setCount] = useState<number>(0);
@@ -219,18 +266,18 @@ const FocusInput: React.FC = () => {
 
   const clearInput = () => {
     if (inputRef.current) {
-      inputRef.current.value = '';
+      inputRef.current.value = "";
     }
   };
 
   const addName = () => {
     if (inputRef.current) {
-      inputRef.current.value = 'สมชาย ใจดี';
+      inputRef.current.value = "สมชาย ใจดี";
     }
-  }
+  };
 
   const incrementCount = () => {
-    setCount(prev => {
+    setCount((prev) => {
       prevCountRef.current = prev; // เก็บค่า previous
       return prev + 1;
     });
@@ -238,8 +285,10 @@ const FocusInput: React.FC = () => {
 
   return (
     <div className="p-4 border rounded-lg bg-purple-50 text-black">
-      <h3 className="text-lg font-bold mb-2">useRef Example - การจัดการ Input</h3>
-      
+      <h3 className="text-lg font-bold mb-2">
+        useRef Example - การจัดการ Input
+      </h3>
+
       <div className="mb-4">
         <input
           ref={inputRef}
@@ -248,21 +297,21 @@ const FocusInput: React.FC = () => {
           className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>
-      
+
       <div className="flex gap-2 mb-4">
-        <button 
+        <button
           onClick={focusInput}
           className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
         >
           Focus Input
         </button>
-        <button 
+        <button
           onClick={clearInput}
           className="px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600"
         >
           ล้างข้อความ
         </button>
-        <button 
+        <button
           onClick={addName}
           className="px-4 py-2 bg-pink-500 text-white rounded hover:bg-pink-600"
         >
@@ -274,7 +323,7 @@ const FocusInput: React.FC = () => {
         <h4 className="font-bold mb-2">ตัวอย่างการเก็บค่า Previous:</h4>
         <p>ค่าปัจจุบัน: {count}</p>
         <p>ค่าเดิม: {prevCountRef.current}</p>
-        <button 
+        <button
           onClick={incrementCount}
           className="mt-2 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
         >
@@ -289,8 +338,10 @@ const FocusInput: React.FC = () => {
 const HooksExamples: React.FC = () => {
   return (
     <div className="max-w-4xl mx-auto p-6 text-black">
-      <h1 className="text-3xl font-bold text-center mb-8 text-white">ตัวอย่าง React Hooks</h1>
-      
+      <h1 className="text-3xl font-bold text-center mb-8 text-white">
+        ตัวอย่าง React Hooks
+      </h1>
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Counter />
         <Timer />
@@ -302,37 +353,38 @@ const HooksExamples: React.FC = () => {
 
       <div className="mt-8 p-6 bg-gray-100 rounded-lg">
         <h2 className="text-xl font-bold mb-4">คำอธิบาย React Hooks</h2>
-        
+
         <div className="space-y-4">
           <div>
             <h3 className="font-bold text-blue-600">useState</h3>
             <p className="text-sm">
-              ใช้สำหรับจัดการ state ใน functional component เก็บข้อมูลที่สามารถเปลี่ยนแปลงได้ 
-              และทำให้ component re-render เมื่อ state เปลี่ยน
+              ใช้สำหรับจัดการ state ใน functional component
+              เก็บข้อมูลที่สามารถเปลี่ยนแปลงได้ และทำให้ component re-render
+              เมื่อ state เปลี่ยน
             </p>
           </div>
-          
+
           <div>
             <h3 className="font-bold text-green-600">useEffect</h3>
             <p className="text-sm">
-              ใช้สำหรับจัดการ side effects เช่น การเรียก API, การตั้งค่า timer, 
+              ใช้สำหรับจัดการ side effects เช่น การเรียก API, การตั้งค่า timer,
               การ subscribe/unsubscribe จาก external data source
             </p>
           </div>
-          
+
           <div>
             <h3 className="font-bold text-purple-600">useRef</h3>
             <p className="text-sm">
-              ใช้สำหรับอ้างอิง DOM elements หรือเก็บค่าที่ไม่ทำให้ component re-render 
-              เมื่อเปลี่ยน เช่น การ focus input หรือเก็บค่า previous
+              ใช้สำหรับอ้างอิง DOM elements หรือเก็บค่าที่ไม่ทำให้ component
+              re-render เมื่อเปลี่ยน เช่น การ focus input หรือเก็บค่า previous
             </p>
           </div>
-          
+
           <div>
             <h3 className="font-bold text-orange-600">useContext</h3>
             <p className="text-sm">
-              ใช้สำหรับเข้าถึง Context ที่สร้างไว้ เพื่อส่งข้อมูลผ่าน component tree 
-              โดยไม่ต้องส่ง props ผ่านหลายระดับ
+              ใช้สำหรับเข้าถึง Context ที่สร้างไว้ เพื่อส่งข้อมูลผ่าน component
+              tree โดยไม่ต้องส่ง props ผ่านหลายระดับ
             </p>
           </div>
         </div>
@@ -341,4 +393,4 @@ const HooksExamples: React.FC = () => {
   );
 };
 
-export default HooksExamples; 
+export default HooksExamples;

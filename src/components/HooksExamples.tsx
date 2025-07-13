@@ -223,6 +223,12 @@ const FocusInput: React.FC = () => {
     }
   };
 
+  const addName = () => {
+    if (inputRef.current) {
+      inputRef.current.value = 'สมชาย ใจดี';
+    }
+  }
+
   const incrementCount = () => {
     setCount(prev => {
       prevCountRef.current = prev; // เก็บค่า previous
@@ -255,6 +261,12 @@ const FocusInput: React.FC = () => {
           className="px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600"
         >
           ล้างข้อความ
+        </button>
+        <button 
+          onClick={addName}
+          className="px-4 py-2 bg-pink-500 text-white rounded hover:bg-pink-600"
+        >
+          เพิ่มชื่อ
         </button>
       </div>
 
